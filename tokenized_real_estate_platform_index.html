@@ -1,0 +1,730 @@
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tokenized Real Estate — Demo</title>
+  <meta name="description" content="Invest in real estate from $100 — tokenizing the future. Demo site.">
+  <style>
+    /* --- Reset & base --- */
+    :root{
+      --blue:#0A74FF;
+      --green:#00A676;
+      --muted:#6B7280;
+      --bg:#ffffff;
+      --card:#F8FAFC;
+      --glass: rgba(255,255,255,0.6);
+      --radius:14px;
+      --shadow: 0 8px 24px rgba(12,18,36,0.06);
+      --glass-shadow: 0 6px 18px rgba(12,18,36,0.06);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:var(--bg);color:#111}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+
+    /* --- Layout --- */
+    header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid #EEF2F6;background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.85));position:sticky;top:0;backdrop-filter: blur(6px);z-index:40}
+    .logo{display:flex;gap:12px;align-items:center}
+    .logo .mark{width:44px;height:44px;background:linear-gradient(135deg,var(--blue),var(--green));border-radius:10px;box-shadow: var(--glass-shadow);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    nav{display:flex;gap:18px;align-items:center}
+    button.primary{background:var(--blue);color:white;padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:600;transition:transform .12s, box-shadow .12s}
+    button.primary:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(10,116,255,0.12)}
+    button.ghost{background:transparent;border:1px solid #E6EDF8;padding:8px 12px;border-radius:10px}
+
+    /* --- Hero --- */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:32px;padding:48px 32px;align-items:center}
+    .hero h1{font-size:36px;margin:0 0 12px}
+    .hero p.lead{color:var(--muted);margin:0 0 20px}
+    .metrics{display:flex;gap:12px;margin-top:18px}
+    .metric{background:var(--card);padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:13px}
+
+    .card-white{background:white;border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+    .cta-row{display:flex;gap:12px}
+
+    /* --- How it works --- */
+    .how{display:flex;gap:12px;margin-top:28px}
+    .step{flex:1;background:linear-gradient(180deg,#fff,#FBFEFF);padding:18px;border-radius:12px;border:1px solid #EEF6FF}
+    .step h4{margin:0 0 8px}
+    .icons{display:flex;gap:10px}
+
+    /* --- Marketplace --- */
+    .container{max-width:1200px;margin:30px auto;padding:0 20px}
+    .filters{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+    .filters select,.filters input{padding:8px 10px;border-radius:10px;border:1px solid #EEF2F6}
+
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .prop{background:white;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);transition:transform .12s}
+    .prop:hover{transform:translateY(-6px)}
+    .prop .meta{padding:12px}
+    .prop h3{margin:6px 0 4px;font-size:16px}
+    .prop .price{font-size:14px;font-weight:700}
+    .prop .small{color:var(--muted);font-size:13px}
+    .spark{height:40px;background:linear-gradient(90deg,#E7F6FF,#F1FFF5);border-radius:8px;margin-top:8px;padding:6px}
+
+    /* Marketplace modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(6,12,24,0.42);z-index:80}
+    .modal.open{display:flex}
+    .modal-card{width:520px;background:white;border-radius:12px;padding:18px}
+    .modal-card h3{margin:0 0 12px}
+
+    /* --- Dashboard --- */
+    .snapshot{display:flex;gap:12px}
+    .snapshot .tile{background:linear-gradient(180deg,#fff,#FBFFFD);padding:14px;border-radius:10px;min-width:160px;box-shadow:var(--shadow)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;text-align:left;border-bottom:1px solid #F3F6F9}
+
+    /* --- Smart contract --- */
+    .accordion{border-radius:12px;overflow:hidden}
+    .accordion .row{padding:12px;background:white;border-bottom:1px solid #F3F6F9;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+    .accordion .content{padding:12px;background:var(--card);display:none}
+    .accordion .content.open{display:block}
+
+    /* --- About / Team --- */
+    .team{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .member{background:white;padding:12px;border-radius:10px;text-align:center}
+    .member img{width:72px;height:72px;border-radius:12px;object-fit:cover;margin:0 auto}
+
+    /* --- Footer --- */
+    footer{padding:28px 32px;background:#F8FAFC;margin-top:40px}
+
+    /* --- Responsive --- */
+    @media (max-width:1000px){
+      .hero{grid-template-columns:1fr}
+      .cards{grid-template-columns:repeat(2,1fr)}
+      .team{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:600px){
+      header{padding:12px}
+      .cards{grid-template-columns:1fr}
+      nav{display:none}
+      .hero{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="mark">P</div>
+      <div>
+        <div style="font-weight:700">Propertize</div>
+        <div style="font-size:12px;color:var(--muted)">Tokenized Real Estate</div>
+      </div>
+    </div>
+    <nav>
+      <a href="#home" data-link="" style="opacity: 1;">Home</a>
+      <a href="#market" data-link="" style="opacity: 0.65;">Marketplace</a>
+      <a href="#dashboard" data-link="" style="opacity: 0.65;">Dashboard</a>
+      <a href="#contracts" data-link="" style="opacity: 0.65;">Smart Contract</a>
+      <a href="#about" data-link="" style="opacity: 0.65;">About</a>
+    </nav>
+    <div>
+      <button class="ghost" id="connectBtn">Sign In</button>
+      <button class="primary" id="startBtn">Start Investing</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero / Landing -->
+    <section id="home" class="hero container" style="display: block;">
+      <div>
+        <h1>Invest in real estate from $100 — tokenizing the future</h1>
+        <p class="lead">Access to real estate income through fractional tokens. Transparent. Liquid. Barrier-free.</p>
+        <div class="cta-row">
+          <button class="primary" id="ctaStart">Start Investing</button>
+          <button class="ghost" onclick="navigateTo('#market')">View Marketplace</button>
+        </div>
+        <div class="metrics">
+          <div class="metric"><strong>$2.4M</strong><div style="font-size:12px;color:var(--muted)">under management</div></div>
+          <div class="metric"><strong>1,230</strong><div style="font-size:12px;color:var(--muted)">investors</div></div>
+          <div class="metric"><strong>45</strong><div style="font-size:12px;color:var(--muted)">properties</div></div>
+        </div>
+
+        <div class="how">
+          <div class="step card-white">
+            <h4>1. Choose Property</h4>
+            <div class="small">Browse the catalog — filter by region and yield.</div>
+          </div>
+          <div class="step card-white">
+            <h4>2. Buy Tokens</h4>
+            <div class="small">Invest from $100 — receive proportional share of income.</div>
+          </div>
+          <div class="step card-white">
+            <h4>3. Earn Income</h4>
+            <div class="small">Automatic payouts and ability to trade on the marketplace.</div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card-white" style="width:100%;max-width:420px">
+          <h3 style="margin-top:0">Quick Example</h3>
+          <div style="font-size:13px;color:var(--muted)">Property: Residential Complex "Sunny" — 1,000 tokens in circulation</div>
+          <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+            <div style="flex:1">
+              <div style="font-size:14px;font-weight:700">Token Price</div>
+              <div class="price">$1.00</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:14px;font-weight:700">Yield</div>
+              <div style="color:var(--green);font-weight:700">6.5% annual</div>
+            </div>
+          </div>
+          <div style="margin-top:14px">
+            <button class="primary" onclick="openModal('buy','Residential Complex \" sunny\"',1)"="">Buy Token</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Marketplace -->
+    <section id="market" class="container" style="display: none;">
+      <h2>Marketplace</h2>
+      <div class="filters">
+        <select id="typeFilter"><option value="all">All Types</option><option value="residential">Residential</option><option value="commercial">Commercial</option></select>
+        <select id="regionFilter"><option value="all">Region: All</option><option value="astana">Astana</option><option value="almaty">Almaty</option></select>
+        <input type="range" id="roiFilter" min="0" max="15" value="0"> <div style="font-size:13px;color:var(--muted)">Min ROI: <span id="roiVal">0%</span></div>
+        <div style="margin-left:auto;display:flex;gap:8px"><button class="ghost" onclick="loadMock()">Reset</button></div>
+      </div>
+
+      <div class="cards" id="cards"><div class="prop">
+          <img src="https://weproject.media/upload/iblock/94d/94dbe274985d538f68ddd8fedcd31f5a.jpg" alt="Residential Complex " sunny""="">
+          <div class="meta">
+            <h3>Residential Complex "Sunny"</h3>
+            <div class="small">Astana • residential</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$1.00 / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:#0A74FF">6.5%</div>
+                <div class="small">Available: 900</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','Residential Complex " sunny"',1)"="">Buy</button>
+              <button class="primary" onclick="addToPortfolio(1)">Add to Portfolio</button>
+            </div>
+          </div>
+        </div><div class="prop">
+          <img src="https://upload.wikimedia.org/wikipedia/ru/6/65/Abu_Dhabi_Plaza.JPG" alt="Business Plaza Office Center">
+          <div class="meta">
+            <h3>Business Plaza Office Center</h3>
+            <div class="small">Almaty • commercial</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$2.50 / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:var(--green)">8.1%</div>
+                <div class="small">Available: 2&nbsp;400</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','Business Plaza Office Center',2.5)">Buy</button>
+              <button class="primary" onclick="addToPortfolio(2)">Add to Portfolio</button>
+            </div>
+          </div>
+        </div><div class="prop">
+          <img src="https://picsum.photos/seed/3/600/320" alt="Logistics Park">
+          <div class="meta">
+            <h3>Logistics Park</h3>
+            <div class="small">Astana • industrial</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$0.80 / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:var(--green)">7.2%</div>
+                <div class="small">Available: 5&nbsp;000</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','Logistics Park',0.8)">Buy</button>
+              <button class="primary" onclick="addToPortfolio(3)">Add to Portfolio</button>
+            </div>
+          </div>
+        </div><div class="prop">
+          <img src="898560ff-3112-48bd-9870-8c8174e16da6.jpg" alt="Shopping Center " market""="">
+          <div class="meta">
+            <h3>Shopping Center "Market"</h3>
+            <div class="small">Almaty • commercial</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$1.20 / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:#0A74FF">5.9%</div>
+                <div class="small">Available: 2&nbsp;000</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','Shopping Center " market"',1.2)"="">Buy</button>
+              <button class="primary" onclick="addToPortfolio(4)">Add to Portfolio</button>
+            </div>
+          </div>
+        </div><div class="prop">
+          <img src="https://picsum.photos/seed/5/600/320" alt="Residential Complex " river="" valley""="">
+          <div class="meta">
+            <h3>Residential Complex "River Valley"</h3>
+            <div class="small">Astana • residential</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$1.10 / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:#0A74FF">6.9%</div>
+                <div class="small">Available: 750</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','Residential Complex " river="" valley"',1.1)"="">Buy</button>
+              <button class="primary" onclick="addToPortfolio(5)">Add to Portfolio</button>
+            </div>
+          </div>
+        </div><div class="prop">
+          <img src="https://picsum.photos/seed/6/600/320" alt="Warehouse Complex">
+          <div class="meta">
+            <h3>Warehouse Complex</h3>
+            <div class="small">Almaty • industrial</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$0.60 / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:var(--green)">9.5%</div>
+                <div class="small">Available: 10&nbsp;000</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','Warehouse Complex',0.6)">Buy</button>
+              <button class="primary" onclick="addToPortfolio(6)">Add to Portfolio</button>
+            </div>
+          </div>
+        </div></div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="container" style="display: none;">
+      <h2>Portfolio</h2>
+      <div class="snapshot">
+        <div class="tile">
+          <div style="font-size:12px;color:var(--muted)">Portfolio Value</div>
+          <div style="font-weight:700;font-size:18px">$1,540.00</div>
+        </div>
+        <div class="tile">
+          <div style="font-size:12px;color:var(--muted)">Unrealized P&amp;L</div>
+          <div style="font-weight:700;font-size:18px;color:var(--green)">+$120.00</div>
+        </div>
+        <div class="tile">
+          <div style="font-size:12px;color:var(--muted)">Available Balance</div>
+          <div style="font-weight:700;font-size:18px">$240.00</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px" class="card-white">
+        <h3>Assets</h3>
+        <table>
+          <thead>
+            <tr><th>Property</th><th>Tokens</th><th>Token Price</th><th>Avg Price</th><th>Yield</th><th></th></tr>
+          </thead>
+          <tbody id="assetsTbody"></tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:18px" class="card-white">
+        <h3>Transaction History</h3>
+        <table>
+          <thead><tr><th>Date</th><th>Operation</th><th>Amount</th></tr></thead>
+          <tbody id="historyTbody"><tr><td>09.11.2025, 13:51:28</td><td>Sale Residential Complex "Sunny"</td><td>$100.00</td></tr><tr><td>09.11.2025, 13:48:10</td><td>Продажа Офисный центр "Бизнес Плаза"</td><td>$25080122.50</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Smart Contracts -->
+    <section id="contracts" class="container" style="display: none;">
+      <h2>Smart Contracts &amp; Legal</h2>
+      <div class="accordion card-white">
+        <div class="row" onclick="toggleAcc(0)">
+          <div><strong>What is a token?</strong><div style="font-size:12px;color:var(--muted)">Economic rights and income distribution.</div></div>
+          <div>▶</div>
+        </div>
+        <div class="content open" id="acc0">
+          <p>A token is a digital asset that secures the right to a share of economic income from a property. The legal form is fixed through SPV and offering memorandum.</p>
+          <pre style="background:#F3F7FB;padding:10px;border-radius:8px">Example: 10,000 tokens = 100% share. Owning 100 tokens means you own 1% of the income.</pre>
+        </div>
+
+        <div class="row" onclick="toggleAcc(1)">
+          <div><strong>Income Distribution</strong><div style="font-size:12px;color:var(--muted)">Automatic through smart contract.</div></div>
+          <div>▶</div>
+        </div>
+        <div class="content open" id="acc1">
+          <p>Rental payments are received by the contract, then distributed proportionally across tokens. Payments can be made in fiat or stablecoin, according to user settings.</p>
+        </div>
+
+        <div class="row" onclick="toggleAcc(2)">
+          <div><strong>Audit and Security</strong><div style="font-size:12px;color:var(--muted)">External audits, bug-bounty.</div></div>
+          <div>▶</div>
+        </div>
+        <div class="content" id="acc2">
+          <p>Contracts undergo audit by an external company. All transactions are public and can be verified in the blockchain explorer.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:18px" class="card-white">
+        <h3>Documents</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="ghost" href="#">Terms of Use (PDF)</a>
+          <a class="ghost" href="#">Privacy Policy (PDF)</a>
+          <a class="ghost" href="#">AML/KYC (PDF)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About / Team / Contact -->
+    <section id="about" class="container" style="display: none;">
+      <h2>About the Project</h2>
+      <div class="card-white">
+        <p><strong>Mission:</strong> Accessible and transparent real estate investment for everyone.</p>
+        <p>Our goal is to simplify access to quality real estate and provide investors with tools to manage their investments and risks.</p>
+      </div>
+
+      <h3 style="margin-top:18px">Team</h3>
+      <div class="team">
+        <div class="member">
+          <img src="" alt="CEO">
+          <div style="font-weight:700;margin-top:8px">Alexey Ivanov</div>
+          <div style="font-size:13px;color:var(--muted)">CEO — 10 years in PropTech and FinTech</div>
+        </div>
+        <div class="member">
+          <img src="https://images.unsplash.com/photo-1545996124-1b6f6a4b3bda?w=200&amp;h=200&amp;fit=crop" alt="CTO">
+          <div style="font-weight:700;margin-top:8px">Maria Sidorova</div>
+          <div style="font-size:13px;color:var(--muted)">CTO — blockchain, security</div>
+        </div>
+        <div class="member">
+          <img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&amp;h=200&amp;fit=crop" alt="CMO">
+          <div style="font-weight:700;margin-top:8px">Timur Bakhtiyarov</div>
+          <div style="font-size:13px;color:var(--muted)">Marketing Lead — growth &amp; partnerships</div>
+        </div>
+        <div class="member">
+          <img src="https://images.unsplash.com/photo-1544006659-f0b21884ce1d?w=200&amp;h=200&amp;fit=crop" alt="Advisor">
+          <div style="font-weight:700;margin-top:8px">Ekaterina Petrova</div>
+          <div style="font-size:13px;color:var(--muted)">Advisor — compliance &amp; legal</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px" class="card-white">
+        <h3>Contact</h3>
+        <form id="contactForm">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input name="name" placeholder="Name" style="flex:1;padding:10px;border:1px solid #EEF2F6;border-radius:8px" required="">
+            <input name="email" placeholder="Email" style="flex:1;padding:10px;border:1px solid #EEF2F6;border-radius:8px" required="">
+          </div>
+          <textarea name="message" placeholder="Message" style="width:100%;margin-top:8px;padding:10px;border:1px solid #EEF2F6;border-radius:8px" required=""></textarea>
+          <div style="margin-top:8px"><button class="primary" type="submit">Send</button></div>
+        </form>
+      </div>
+
+      <div style="margin-top:18px" class="card-white">
+        <h3>Investors</h3>
+        <div style="font-size:13px;color:var(--muted)">Seed funding $750k — roadmap and forecasts available upon request.</div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <strong>Propertize</strong>
+        <div style="font-size:13px;color:var(--muted)">© 2025 — All rights reserved</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a href="#">Telegram</a>
+        <a href="#">Discord</a>
+        <a href="#">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <h3 id="modalTitle">Buy Tokens — Residential Complex "Sunny"</h3>
+      <div id="modalBody">
+        <div style="font-size:13px;color:var(--muted)">Enter number of tokens (minimum 100)</div>
+        <input id="buyQty" type="number" min="100" value="100" style="width:100%;padding:10px;margin-top:8px;border-radius:8px;border:1px solid #EEF2F6">
+        <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+          <div>Cost:</div>
+          <div id="totalCost" style="font-weight:700">$100.00</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <button class="ghost" onclick="closeModal()">Cancel</button>
+        <button class="primary" onclick="confirmBuy()">Confirm Purchase</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Upload Modal -->
+  <div class="modal" id="imageModal">
+    <div class="modal-card" style="width:600px;max-width:90vw">
+      <h3 id="imageModalTitle">Upload Property Image</h3>
+      <div id="imageModalBody">
+        <div style="margin-bottom:16px">
+          <label style="display:block;margin-bottom:8px;font-weight:600">Method 1: Upload from computer</label>
+          <input type="file" id="imageFileInput" accept="image/*" style="width:100%;padding:8px;border:1px solid #EEF2F6;border-radius:8px">
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Select an image file (JPG, PNG, etc.)</div>
+        </div>
+        <div style="margin:16px 0;text-align:center;color:var(--muted)">OR</div>
+        <div>
+          <label style="display:block;margin-bottom:8px;font-weight:600">Method 2: Enter image URL</label>
+          <input type="url" id="imageUrlInput" placeholder="https://example.com/image.jpg" style="width:100%;padding:10px;border:1px solid #EEF2F6;border-radius:8px">
+        </div>
+        <div id="imagePreview" style="margin-top:16px;text-align:center;display:none">
+          <img id="previewImg" src="" alt="Preview" style="max-width:100%;max-height:300px;border-radius:8px;box-shadow:var(--shadow)">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+        <button class="ghost" onclick="closeImageModal()">Cancel</button>
+        <button class="primary" onclick="savePropertyImage()">Save Image</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Simple SPA navigation ---
+    function navigateTo(hash){
+      location.hash = hash;
+      render();
+    }
+    document.querySelectorAll('[data-link]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();navigateTo(a.getAttribute('href'))}))
+    document.getElementById('ctaStart').addEventListener('click',()=>navigateTo('#market'))
+    document.getElementById('startBtn').addEventListener('click',()=>navigateTo('#market'))
+
+    function render(){
+      const sections = document.querySelectorAll('main section');
+      const hash = location.hash || '#home';
+      sections.forEach(s=>{s.style.display = ('#'+s.id)===hash? 'block':'none'})
+      // highlight nav
+      document.querySelectorAll('nav a').forEach(a=>{
+        a.style.opacity = a.getAttribute('href')===hash? '1':'0.65'
+      })
+    }
+    window.addEventListener('hashchange',render)
+    render()
+
+    // --- Mock marketplace data ---
+    // To add your own images, simply add an "image" field with the image URL to any property
+    // Example: {id:1, name:'...', image:'https://example.com/my-photo.jpg', ...}
+    const props = [
+      {id:1,name:'Residential Complex "HighVill"',city:'Astana',type:'residential',price:1,roi:6.5,available:900,image:'https://weproject.media/upload/iblock/94d/94dbe274985d538f68ddd8fedcd31f5a.jpg'},
+      {id:2,name:'Business Center "Abu Dhabi Plaza"',city:'Astana',type:'commercial',price:2.5,roi:8.1,available:2400,image:'https://upload.wikimedia.org/wikipedia/ru/6/65/Abu_Dhabi_Plaza.JPG'},
+      {id:3,name:'Residential Complex "Akbulak Riviera"',city:'Astana',type:'residential',price:0.8,roi:7.2,available:5000,image:'https://avatars.mds.yandex.net/get-altay/11492238/2a0000018e6515f149b3e706e8f357c45a54/L_height'},
+      {id:4,name:'Residential Complex "Nurly Tau"',city:'Almaty',type:'residential',price:1.2,roi:5.9,available:2000,image:'https://storage.googleapis.com/bd-kz-01/buildings-v2/1280x960/1299.jpg'},
+      {id:5,name:'Shopping Center "Mega SilkWay"',city:'Astana',type:'commercial',price:1.1,roi:6.9,available:750,image:'https://img.forbes.kz/forbes-photobank/media/2024-06-17/0c128c21-3d04-4fcf-94a3-c833daa04e25.webp'},
+      {id:6,name:'Business Center "Esentai Towers"',city:'Almaty',type:'commercial',price:0.6,roi:9.5,available:10000,image:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Esentai_Park.jpg/1200px-Esentai_Park.jpg'}
+    ];
+
+    // Get property image: first check property.image field, then localStorage, then default
+    function getPropertyImage(property){
+      // First priority: image URL in the property object itself
+      if(property.image && property.image.trim() !== ''){
+        return property.image;
+      }
+      // Second priority: saved in localStorage (from upload modal)
+      const savedImages = JSON.parse(localStorage.getItem('propertyImages') || '{}');
+      if(savedImages[property.id]){
+        return savedImages[property.id];
+      }
+      // Default: random placeholder image
+      return `https://picsum.photos/seed/${property.id}/600/320`;
+    }
+
+    function renderCards(list){
+      const cards = document.getElementById('cards'); cards.innerHTML='';
+      list.forEach(p=>{
+        const el = document.createElement('div'); el.className='prop';
+        const imageUrl = getPropertyImage(p);
+        el.innerHTML = `
+          <div style="position:relative">
+            <img src="${imageUrl}" alt="${p.name}" style="width:100%;height:200px;object-fit:cover">
+            <button onclick="openImageModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.9);border:1px solid #E6EDF8;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600">📷 Edit</button>
+          </div>
+          <div class="meta">
+            <h3>${p.name}</h3>
+            <div class="small">${p.city} • ${p.type}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="price">$${p.price.toFixed(2)} / token</div>
+                <div class="small">Min. lot: 100 tokens</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-weight:700;color:${p.roi>7? 'var(--green)':'#0A74FF'}">${p.roi}%</div>
+                <div class="small">Available: ${p.available.toLocaleString()}</div>
+              </div>
+            </div>
+            <div class="spark"></div>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="ghost" onclick="openModal('buy','${p.name.replace(/'/g, "\\'")}',${p.price})">Buy</button>
+              <button class="primary" onclick="addToPortfolio(${p.id})">Add to Portfolio</button>
+            </div>
+          </div>
+        `;
+        cards.appendChild(el);
+      })
+    }
+
+    // filters
+    document.getElementById('roiFilter').addEventListener('input',e=>{document.getElementById('roiVal').innerText = e.target.value+'%';applyFilters()})
+    document.getElementById('typeFilter').addEventListener('change',applyFilters)
+    document.getElementById('regionFilter').addEventListener('change',applyFilters)
+
+    function applyFilters(){
+      const roi = Number(document.getElementById('roiFilter').value)
+      const type = document.getElementById('typeFilter').value
+      const region = document.getElementById('regionFilter').value
+      let res = props.filter(p=>p.roi>=roi)
+      if(type!=='all') res = res.filter(p=>p.type===type)
+      if(region!=='all') res = res.filter(p=>p.city.toLowerCase()===region)
+      renderCards(res)
+    }
+
+    function loadMock(){ document.getElementById('typeFilter').value='all'; document.getElementById('regionFilter').value='all'; document.getElementById('roiFilter').value=0; document.getElementById('roiVal').innerText='0%'; renderCards(props)}
+    loadMock();
+
+    // --- Modal purchase flow ---
+    let modalMode = null; let modalPrice = 1; let modalName = '';
+    function openModal(mode,name,price){ modalMode=mode; modalPrice=price; modalName=name; document.getElementById('modalTitle').innerText = (mode==='buy'? 'Buy Tokens — ':'')+name; document.getElementById('buyQty').value=100; updateTotal(); document.getElementById('modal').classList.add('open') }
+    function closeModal(){ document.getElementById('modal').classList.remove('open') }
+    document.getElementById('buyQty').addEventListener('input',updateTotal)
+    function updateTotal(){ const qty = Number(document.getElementById('buyQty').value||0); document.getElementById('totalCost').innerText = '$'+(qty*modalPrice).toFixed(2) }
+    function confirmBuy(){ const qty = Number(document.getElementById('buyQty').value||0); if(qty<100){alert('Minimum 100 tokens');return} // mock
+      // add to portfolio as a purchase
+      const assets = JSON.parse(localStorage.getItem('assets')||'[]')
+      assets.push({id:Date.now(),name:modalName,qty,price:modalPrice,date:new Date().toLocaleString()})
+      localStorage.setItem('assets',JSON.stringify(assets))
+      closeModal(); alert('Purchase successful — check your portfolio.'); renderPortfolio(); navigateTo('#dashboard') }
+
+    // --- Portfolio rendering ---
+    function addToPortfolio(id){ const p = props.find(x=>x.id===id); openModal('buy',p.name,p.price) }
+
+    function renderPortfolio(){
+      const assets = JSON.parse(localStorage.getItem('assets')||'[]')
+      const tbody = document.getElementById('assetsTbody'); tbody.innerHTML=''
+      assets.forEach(a=>{
+        const tr = document.createElement('tr')
+        tr.innerHTML = `<td>${a.name}</td><td>${a.qty}</td><td>$${a.price.toFixed(2)}</td><td>$${(a.price*0.95).toFixed(2)}</td><td style="color:var(--green)">+5.2%</td><td><button class="ghost" onclick='sellAsset(${a.id})'>Sell</button></td>`
+        tbody.appendChild(tr)
+      })
+      const history = JSON.parse(localStorage.getItem('history')||'[]')
+      const ht = document.getElementById('historyTbody'); ht.innerHTML=''
+      history.forEach(h=>{ const tr = document.createElement('tr'); tr.innerHTML = `<td>${h.date}</td><td>${h.type}</td><td>${h.amount}</td>`; ht.appendChild(tr) })
+    }
+    function sellAsset(id){ // mock sell
+      let assets = JSON.parse(localStorage.getItem('assets')||'[]')
+      const asset = assets.find(a=>a.id===id)
+      if(!asset) return alert('Asset not found')
+      assets = assets.filter(a=>a.id!==id)
+      localStorage.setItem('assets',JSON.stringify(assets))
+      const history = JSON.parse(localStorage.getItem('history')||'[]')
+      history.unshift({date:new Date().toLocaleString(),type:'Sale '+asset.name,amount:'$'+(asset.qty*asset.price).toFixed(2)})
+      localStorage.setItem('history',JSON.stringify(history))
+      renderPortfolio(); alert('Sold')
+    }
+    renderPortfolio();
+
+    // --- Accordion ---
+    function toggleAcc(i){ const el = document.getElementById('acc'+i); el.classList.toggle('open') }
+
+    // --- Contact form ---
+    document.getElementById('contactForm').addEventListener('submit', function(e){ e.preventDefault(); alert('Thank you! We have received your message.'); this.reset() })
+
+    // quick connect mock
+    document.getElementById('connectBtn').addEventListener('click', ()=>{ alert('Mock: sign in via email'); })
+
+    // --- Image upload functionality ---
+    let currentEditingPropId = null;
+    let currentImageData = null;
+
+    function openImageModal(propId, propName){
+      currentEditingPropId = propId;
+      document.getElementById('imageModalTitle').innerText = `Upload Image: ${propName}`;
+      document.getElementById('imageFileInput').value = '';
+      document.getElementById('imageUrlInput').value = '';
+      document.getElementById('imagePreview').style.display = 'none';
+      currentImageData = null;
+      document.getElementById('imageModal').classList.add('open');
+    }
+
+    function closeImageModal(){
+      document.getElementById('imageModal').classList.remove('open');
+      currentEditingPropId = null;
+      currentImageData = null;
+    }
+
+    // Handle file upload
+    document.getElementById('imageFileInput').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = function(event){
+          currentImageData = event.target.result;
+          document.getElementById('previewImg').src = currentImageData;
+          document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Handle URL input
+    document.getElementById('imageUrlInput').addEventListener('input', function(e){
+      const url = e.target.value.trim();
+      if(url){
+        currentImageData = url;
+        document.getElementById('previewImg').src = url;
+        document.getElementById('imagePreview').style.display = 'block';
+      } else {
+        document.getElementById('imagePreview').style.display = 'none';
+        currentImageData = null;
+      }
+    });
+
+    function savePropertyImage(){
+      if(!currentEditingPropId || !currentImageData){
+        alert('Please select an image or enter a URL');
+        return;
+      }
+      const savedImages = JSON.parse(localStorage.getItem('propertyImages') || '{}');
+      savedImages[currentEditingPropId] = currentImageData;
+      localStorage.setItem('propertyImages', JSON.stringify(savedImages));
+      closeImageModal();
+      // Re-render cards to show new image
+      applyFilters();
+      alert('Image saved successfully!');
+    }
+
+    // small accessibility: close modal on Esc
+    window.addEventListener('keydown', e=>{ 
+      if(e.key==='Escape'){
+        closeModal();
+        closeImageModal();
+      }
+    })
+
+  </script>
+
+
+</body></html>
